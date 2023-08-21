@@ -43,9 +43,8 @@ aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:
 aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AWSLambda_FullAccess
 aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AmazonSNSFullAccess
 
-
-zip -r github-repo-security.zip ./github-repo-security
-
+# Create a Zip file to upload Lambda Function
+zip -r github-repo-security.zip
 
 # Create a Lambda function
 #uploads the zip file and aws will do the extractions
@@ -59,14 +58,12 @@ aws lambda create-function \
   --role "arn:aws:iam::$aws_account_id:role/$role_name" \
   --zip-file "fileb://./github-repo-security.zip"
 
-
+#Create DynamoDBTable
 aws dynamodb create-table \
   --table-name GitHubRepoSecurityTable \
   --attribute-definitions AttributeName=user_id,AttributeType=S AttributeName=RepoCount,AttributeType=N \
-  --key-schema AttributeName=user_id,KeyType=HASH AttributeName=RepoCount,KeyType=RANGE \
+  --key-schema AttributeName=user_id,KeyType=HASH \
   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
-
-
 
 # Create an SNS topic and save the topic ARN to a variable
 topic_arn=$(aws sns create-topic --name github-repo-security-sns --output json | jq -r '.TopicArn')
@@ -88,6 +85,8 @@ aws events put-targets \
 
 
 # Add SNS publish permission to the Lambda Function
+
+# Add SNS publish permission to the Lambda Function
 #aws sns subscribe \
   #--topic-arn "$topic_arn" \
   #--protocol email \
@@ -98,5 +97,3 @@ aws sns publish \
   #--topic-arn "$topic_arn" \
   #--subject "A new Repo in Github" \
   #--message "Hello, A New Repo was uploaded in Github"
-
-

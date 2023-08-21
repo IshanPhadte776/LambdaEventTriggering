@@ -31,6 +31,10 @@ def lambda_handler(event, context):
     # Update the DynamoDB table with the current repo count
     dynamodb.put_item(TableName='GitHubRepoSecurityTable', Item={'user_id': {'S': user_id}, 'RepoCount': {'N': str(num_repos)}})
     
+
+
+
+    
     
     print(prev_repo_count)
     
