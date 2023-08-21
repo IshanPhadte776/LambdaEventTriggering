@@ -41,8 +41,11 @@ echo "Role ARN: $role_arn"
 # Attach Permissions to the Role
 aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
 aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AWSLambda_FullAccess
-aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole
 aws iam attach-role-policy --role-name $role_name --policy-arn arn:aws:iam::aws:policy/AmazonSNSFullAccess
+
+
+zip -r github-repo-security.zip ./github-repo-security
+
 
 # Create a Lambda function
 #uploads the zip file and aws will do the extractions
@@ -60,8 +63,9 @@ aws lambda create-function \
 aws dynamodb create-table \
   --table-name GitHubRepoSecurityTable \
   --attribute-definitions AttributeName=user_id,AttributeType=S AttributeName=RepoCount,AttributeType=N \
-  --key-schema AttributeName=user_id,KeyType=HASH \
+  --key-schema AttributeName=user_id,KeyType=HASH AttributeName=RepoCount,KeyType=RANGE \
   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+
 
 
 # Create an SNS topic and save the topic ARN to a variable
