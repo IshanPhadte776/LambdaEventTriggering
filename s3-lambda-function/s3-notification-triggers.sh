@@ -108,5 +108,3 @@ aws sns publish \
   --topic-arn "$topic_arn" \
   --subject "A new object created in s3 bucket" \
   --message "Hello, A New Repo was uploaded in Github"
-
-
