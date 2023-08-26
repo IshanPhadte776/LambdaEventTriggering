@@ -60,7 +60,7 @@ aws lambda create-function \
 
 #Create DynamoDBTable
 aws dynamodb create-table \
-  --table-name GitHubRepoSecurityTable \
+  --table-name AllGithubRepos \
   --attribute-definitions AttributeName=user_id,AttributeType=S AttributeName=RepoCount,AttributeType=N \
   --key-schema AttributeName=user_id,KeyType=HASH \
   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
